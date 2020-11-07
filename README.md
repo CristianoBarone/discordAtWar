@@ -7,3 +7,6 @@ It's a bot I used to make wars in an Italian discord-RP called KOI, this code ha
 
 # Node dependencies:
 discord.js (latest stable/v12)
+
+# DISCLAIMER
+Despite what I was thinking, many are asking me questions about how to use it and let me just say it, this code is for people who ALREADY know how to make a bot, you need to know the basic things to make a "ping/pong" bot at least using DiscordJS else it is pointless for you even trying because I won't answer any more questions on such basilar things.
