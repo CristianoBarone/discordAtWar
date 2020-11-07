@@ -502,7 +502,7 @@ client.on('message', async msg => {
 // ::START UP::
 console.log("discordAtWar: ", startupArgs);
 switch (startupArgs[1]) {
-    case:
+    case "KOI":
         console.log("discordAtWar: logging KOI");
         typeClient = "KOI"
         client.login("YOUR-TOKEN-HERE-DARLING");
