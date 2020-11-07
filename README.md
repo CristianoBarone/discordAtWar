@@ -8,12 +8,12 @@ It's a bot I used to make wars in an Italian discord-RP called KOI, this code ha
 ## What features are in the bot?
 - [x] Classes for players (Infantry, arty, ships, cavalry)
 - [x] Commands for get cover and for aiming
-- [x] Commands for shoot
+- [x] Commands for shooting
 - [ ] Commands for use torpedos (only ships)
-- [ ] Commands for melee fight (only land classes)
+- [ ] Commands for melee fighting (only land classes)
 
 #### I want to contribute! 
-That's awesome, feel free to contact me in anyway you want to __(post scriptum: do not ring on my door, thanks)__  and I will review your code and add it in the file along with credits
+That's awesome, feel free to contact me in anyway you want to __(post scriptum: do not ring at my door, thanks)__  and I will review your code and add it in the file along with credits
 
 # Node dependencies:
 > discord.js (latest stable/v12)
