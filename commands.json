@@ -15,5 +15,6 @@
 	"takecover": "prendicopertura",
 	"aim": "mira",
 	"shoot": "spara",
-	"navalcannon": "cannoneggia"
+	"navalcannon": "cannoneggia",
+	"reloadconf": "ricarica-configurazione"
 }
