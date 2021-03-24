@@ -1,4 +1,5 @@
 # discordAtWar
+> This is now listed as the "legacy code" to be considered deprecated and outdated
 Pew pew pew
 
 
