@@ -3,8 +3,8 @@
 //CONSTs
 const discord = require('Discord.js');
 const client = new discord.Client();
-const { translationBattleStarted, translationBattleEnded, translationBattleOngoing, translationNoBattlesOngoing, translationBattleOf, translationBattleStats } = require('./lang.json');
-const { prefix, startbattle, endbattle, setclasses, addmedic, removemedic, addinfantry, addcavalry, addship, addartillery, remove, reload, cure, takecover, aim, shoot, navalcannon } = require('./commands.json');
+var { translationBattleStarted, translationBattleEnded, translationBattleOngoing, translationNoBattlesOngoing, translationBattleOf, translationBattleStats, translationReloadingConfiguration } = require('./lang.json');
+var { prefix, startbattle, endbattle, setclasses, addmedic, removemedic, addinfantry, addcavalry, addship, addartillery, remove, reload, cure, takecover, aim, shoot, navalcannon, reloadconf } = require('./commands.json');
 
 //VARs
 var shots = 0;
@@ -38,7 +38,12 @@ function resetBattleStats() {
     bombings = 0
     ammo = new Object();
     hidden = new Map();
-	usersInProximity = new Object();
+    usersInProximity = new Object();
+}
+
+function reloadConfs() {
+ var { translationBattleStarted, translationBattleEnded, translationBattleOngoing, translationNoBattlesOngoing, translationBattleOf, translationBattleStats, translationReloadingConfiguration } = require('./lang.json');
+ var { prefix, startbattle, endbattle, setclasses, addmedic, removemedic, addinfantry, addcavalry, addship, addartillery, remove, reload, cure, takecover, aim, shoot, navalcannon, reloadconf } = require('./commands.json');
 }
 
 //---------EVENTS---------\\
@@ -55,11 +60,15 @@ client.on('message', async msg => {
                 battleTakingPlace = true
                 battleChannel = msg.channel.id
                 battleChannelName = msg.channel.name
-                msg.reply(` ${translationBattleStarted}`); //THE BATTLE STARTED!
-
+                msg.reply(` ${translationBattleStarted}`);
             } else {
-                msg.reply(` ${translationBattleOngoing} ${battleChannelName}`); //there is already a battle taking place in ..
+                msg.reply(` ${translationBattleOngoing} ${battleChannelName}`);
             }
+        }
+
+        if (msg.content.startsWith(prefix + reloadconf)) {
+	    msg.reply(` ${translationReloadingConfiguration}`);
+            reloadConfs();
         }
 
         if (msg.content.startsWith(prefix + setclasses)) {
@@ -102,10 +111,10 @@ client.on('message', async msg => {
                 answ.setColor("RANDOM");
                 answ.setFooter(`${translationBattleOf}` + battleChannelName)
                 answ.setDescription(translationBattleEnded + "\ndeaths: " + deaths + "\nColpi sparati: " + shots + "\nFuori combattimento: " + knockedOut + "\nBombardamenti: " + bombings);
-                answ.setTitle(`${translationBattleStats}`); //Stats
+                answ.setTitle(`${translationBattleStats}`);
                 msg.channel.send(answ);
             } else {
-                msg.reply(` ${translationNoBattlesOngoing}`); //No battles are taking place!
+                msg.reply(` ${translationNoBattlesOngoing}`);
             }
         }
 
