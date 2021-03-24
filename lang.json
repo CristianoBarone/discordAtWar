@@ -1,5 +1,8 @@
 {
 	"translationBattleStarted": "BATTAGLIA INIZIATA",
 	"translationBattleEnded": "BATTAGLIA FINITA",
-	"translationBattleOngoing": "c'è già una battaglia in corso in"
+	"translationBattleOngoing": "c'è già una battaglia in corso in",
+	"translationNoBattlesOngoing": "nessuna battaglia in corso!",
+	"translationBattleOf": "Battaglia di",
+	"translationBattleStats": "BILANCIO BATTAGLIA"
 }
