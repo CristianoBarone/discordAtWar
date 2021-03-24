@@ -4,5 +4,6 @@
 	"translationBattleOngoing": "c'è già una battaglia in corso in",
 	"translationNoBattlesOngoing": "nessuna battaglia in corso!",
 	"translationBattleOf": "Battaglia di",
-	"translationBattleStats": "BILANCIO BATTAGLIA"
+	"translationBattleStats": "BILANCIO BATTAGLIA",
+	"translationReloadingConfiguration": "ricarico la configurazione"
 }
