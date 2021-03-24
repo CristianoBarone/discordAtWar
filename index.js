@@ -3,9 +3,6 @@
 //CONSTs
 const discord = require('Discord.js');
 const client = new discord.Client();
-var { translationBattleStarted, translationBattleEnded, translationBattleOngoing, translationNoBattlesOngoing, translationBattleOf, translationBattleStats, translationReloadingConfiguration } = require('./lang.json');
-var { prefix, startbattle, endbattle, setclasses, addmedic, removemedic, addinfantry, addcavalry, addship, addartillery, remove, reload, cure, takecover, aim, shoot, navalcannon, reloadconf } = require('./commands.json');
-
 //VARs
 var shots = 0;
 var knockedOut = 0;
@@ -16,6 +13,9 @@ var bombings = 0;
 let battleTakingPlace = false;
 var battleChannel = "";
 var battleChannelName = "";
+var { translationBattleStarted, translationBattleEnded, translationBattleOngoing, translationNoBattlesOngoing, translationBattleOf, translationBattleStats, translationReloadingConfiguration } = require('./lang.json');
+var { prefix, startbattle, endbattle, setclasses, addmedic, removemedic, addinfantry, addcavalry, addship, addartillery, remove, reload, cure, takecover, aim, shoot, navalcannon, reloadconf } = require('./commands.json');
+var { deadPlayers, infantryRole, cavalryRole, artilleryRole, navyRole, adminRole, woundedRole } = require("./roles.json");
 
 //COLLECTIONS
 var deadMen = [];
@@ -38,12 +38,13 @@ function resetBattleStats() {
     bombings = 0
     ammo = new Object();
     hidden = new Map();
-    usersInProximity = new Object();
+	usersInProximity = new Object();
 }
 
 function reloadConfs() {
  var { translationBattleStarted, translationBattleEnded, translationBattleOngoing, translationNoBattlesOngoing, translationBattleOf, translationBattleStats, translationReloadingConfiguration } = require('./lang.json');
  var { prefix, startbattle, endbattle, setclasses, addmedic, removemedic, addinfantry, addcavalry, addship, addartillery, remove, reload, cure, takecover, aim, shoot, navalcannon, reloadconf } = require('./commands.json');
+ var { deadPlayers, infantryRole, cavalryRole, artilleryRole, navyRole, adminRole, woundedRole } = require("./roles.json");
 }
 
 //---------EVENTS---------\\
@@ -67,37 +68,37 @@ client.on('message', async msg => {
         }
 
         if (msg.content.startsWith(prefix + reloadconf)) {
-	    msg.reply(` ${translationReloadingConfiguration}`);
+			msg.reply(` ${translationReloadingConfiguration}`);
             reloadConfs();
         }
 
         if (msg.content.startsWith(prefix + setclasses)) {
             let guild = msg.channel.guild
-            let roleInfantry = guild.roles.cache.get('749980482334228512') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+            let roleInfantry = guild.roles.cache.get(infatryRole)
             roleInfantry.members.each(x => {
                 classes.set(x.user.id, "infantry")
                 ammo[x.user.id] = 1;
             });
-            let roleCavalry = guild.roles.cache.get('749980570918060174') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+            let roleCavalry = guild.roles.cache.get(cavalryRole)
             roleCavalry.members.each(x => {
                 classes.set(x.user.id, "cavarly")
                 ammo[x.user.id] = 30;
             });
-            let roleNavy = guild.roles.cache.get('749981637927764099') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+            let roleNavy = guild.roles.cache.get(navyRole)
             roleNavy.members.each(x => {
                 classes.set(x.user.id, "navy")
                 ammo[x.user.id] = 1;
             });
-            let roleart = guild.roles.cache.get('749980903358464021') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+            let roleart = guild.roles.cache.get(artilleryRole)
             roleart.members.each(x => {
                 classes.set(x.user.id, "artillery")
                 ammo[x.user.id] = 1;
             });
-            let roleadmin = guild.roles.cache.get('758408981826764871') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+            let roleadmin = guild.roles.cache.get(adminRole)
             roleadmin.members.each(x => {
                 deadMen.push(x.user.id)
             });
-            let roleadmin2 = guild.roles.cache.get('749682979562979348') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+            let roleadmin2 = guild.roles.cache.get( deadPlayers)
             roleadmin2.members.each(x => {
                 deadMen.push(x.user.id)
             });
@@ -111,10 +112,10 @@ client.on('message', async msg => {
                 answ.setColor("RANDOM");
                 answ.setFooter(`${translationBattleOf}` + battleChannelName)
                 answ.setDescription(translationBattleEnded + "\ndeaths: " + deaths + "\nColpi sparati: " + shots + "\nFuori combattimento: " + knockedOut + "\nBombardamenti: " + bombings);
-                answ.setTitle(`${translationBattleStats}`);
+                answ.setTitle(`${translationBattleStats}`); //Stats
                 msg.channel.send(answ);
             } else {
-                msg.reply(` ${translationNoBattlesOngoing}`);
+                msg.reply(` ${translationNoBattlesOngoing}`); //No battles are taking place!
             }
         }
 
@@ -229,7 +230,7 @@ client.on('message', async msg => {
                 shots++
 
                 if (vittima == msg.member) {
-                    vittima.roles.set(['751063437504675852']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+                    vittima.roles.set([ deadPlayers]);  
                     msg.reply(" colpito!");
                     deadMen.push(vittimauser.id);
                     vittima.setNickname("MORTO ☠")
@@ -250,14 +251,14 @@ client.on('message', async msg => {
 								ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                                 console.log(prob);
                                 deaths++
-                                vittima.roles.set(['751063437504675852']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+                                vittima.roles.set([ deadPlayers]);  
                                 deadMen.push(vittimauser.id);
                                 vittima.setNickname("MORTO ☠")
                                 return;
                             } else {
                                 knockedOut++
                                 knockedOutMen.set(vittimauser.id, true)
-                                vittima.roles.set(['751094437148622848']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+                                vittima.roles.set([ woundedRole]);  
 								ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                                 return;
                             }
@@ -272,14 +273,14 @@ client.on('message', async msg => {
 							ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                             console.log(prob);
                             deaths++
-                            vittima.roles.set(['751063437504675852']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+                            vittima.roles.set([ deadPlayers]);  
                             deadMen.push(vittimauser.id);
                             vittima.setNickname("MORTO ☠")
                             return;
                         } else {
                             knockedOut++
                             knockedOutMen.set(vittimauser.id, true)
-                            vittima.roles.set(['751094437148622848']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+                            vittima.roles.set([ woundedRole]);  
 							ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                             return;
                         }
@@ -298,7 +299,7 @@ client.on('message', async msg => {
 								ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                                 console.log(prob);
                                 deaths++
-                                vittima.roles.set(['751063437504675852']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+                                vittima.roles.set([ deadPlayers]);  
                                 deadMen.push(vittimauser.id);
                                 vittima.setNickname("MORTO ☠")
                                 aiming.delete(msg.author.id);
@@ -306,7 +307,7 @@ client.on('message', async msg => {
                             } else {
                                 knockedOut++
                                 knockedOutMen.set(vittimauser.id, true)
-                                vittima.roles.set(['751094437148622848']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+                                vittima.roles.set([ woundedRole]);  
 								ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                                 aiming.delete(msg.author.id);
                                 return;
@@ -326,7 +327,7 @@ client.on('message', async msg => {
                                 ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                                 console.log(prob);
                                 deaths++
-                                vittima.roles.set(['751063437504675852']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+                                vittima.roles.set([ deadPlayers]);  
                                 deadMen.push(vittimauser.id);
                                 vittima.setNickname("MORTO ☠")
                                 aiming.delete(msg.author.id);
@@ -334,7 +335,7 @@ client.on('message', async msg => {
                             } else {
                                 knockedOut++
                                 knockedOutMen.set(vittimauser.id, true)
-                                vittima.roles.set(['751094437148622848']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+                                vittima.roles.set([ woundedRole]);  
                                 ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                                 aiming.delete(msg.author.id);
                                 return;
@@ -377,14 +378,14 @@ client.on('message', async msg => {
                             ammo[msg.author.id] = 0;
                             console.log(prob);
                             deaths++
-                            vittima.roles.set(['751063437504675852']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+                            vittima.roles.set([ deadPlayers]);  
                             deadMen.push(vittimauser.id);
                             vittima.setNickname("MORTO ☠")
                             return;
                         } else {
                             knockedOut++
                             knockedOutMen.set(vittimauser.id, true)
-                            vittima.roles.set(['751094437148622848']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+                            vittima.roles.set([ woundedRole]);  
                             ammo[msg.author.id] = 0;
                         }
                     }
@@ -419,14 +420,14 @@ client.on('message', async msg => {
                                 ammo[msg.author.id] = 0;
                                 console.log(prob);
                                 deaths++
-                                vittima.roles.set(['751063437504675852']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+                                vittima.roles.set([ deadPlayers]);  
                                 deadMen.push(vittimauser.id);
                                 vittima.setNickname("MORTO ☠")
                                 return;
                             } else {
                                 knockedOut++
                                 knockedOutMen.set(vittimauser.id, true)
-                                vittima.roles.set(['751094437148622848']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+                                vittima.roles.set([ woundedRole]);  
                                 ammo[msg.author.id] = 0;
                             }
                         }
