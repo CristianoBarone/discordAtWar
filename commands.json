@@ -1,0 +1,19 @@
+{
+	"prefix" : "/",
+	"startbattle": "inizia-battaglia",
+	"endbattle": "finisci-battaglia",
+	"setclasses": "setclasses",
+	"addmedic": "aggiungi-medico",
+	"removemedic": "rimuovi-medico",
+	"addinfantry": "aggiungi-fante",
+	"addcavalry": "aggiungi-cavaliere",
+	"addship": "aggiungi-nave",
+	"addartillery": "aggiungi-obice",
+	"remove": "rimuovi",
+	"reload": "ricarica",
+	"cure": "cura",
+	"takecover": "prendicopertura",
+	"aim": "mira",
+	"shoot": "spara",
+	"navalcannon": "cannoneggia"
+}
