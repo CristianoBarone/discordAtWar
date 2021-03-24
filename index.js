@@ -3,7 +3,7 @@
 //CONSTs
 const discord = require('Discord.js');
 const client = new discord.Client();
-const { translationBattleStarted, battleEnded, translationBattleOngoing } = require('./lang.json');
+const { translationBattleStarted, battleEnded, translationBattleOngoing, translationNoBattlesOngoing, translationBattleOf, translationBattleStats } = require('./lang.json');
 
 //VARs
 var shots = 0;
@@ -27,6 +27,7 @@ let classes = new Map();
 let ammo = new Object();
 let medics = new Map();
 let health = new Map();
+let usersInProximity = new Object();
 
 //--------FUNCTIONS--------\\
 
@@ -37,6 +38,7 @@ function resetBattleStats() {
     bombings = 0
     ammo = new Object();
     hidden = new Map();
+	usersInProximity = new Object();
 }
 
 //---------EVENTS---------\\
@@ -98,12 +100,12 @@ client.on('message', async msg => {
                 battleChannel = ""
                 let answ = new discord.MessageEmbed();
                 answ.setColor("RANDOM");
-                answ.setFooter("Battaglia di " + battleChannelName)
+                answ.setFooter(`${translationBattleOf}` + battleChannelName)
                 answ.setDescription("deaths: " + deaths + "\nColpi sparati: " + shots + "\nFuori combattimento: " + knockedOut + "\nBombardamenti: " + bombings);
-                answ.setTitle("BILANCIO BATTAGLIA"); //Stats
+                answ.setTitle(`${translationBattleStats}`); //Stats
                 msg.channel.send(answ);
             } else {
-                msg.reply(" nessuna battaglia in corso!"); //No battles are taking place!
+                msg.reply(` ${translationNoBattlesOngoing}`); //No battles are taking place!
             }
         }
 
