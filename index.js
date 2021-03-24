@@ -3,24 +3,24 @@
 //CONSTs
 const discord = require('Discord.js');
 const client = new discord.Client();
-
+const { translationBattleStarted, battleEnded, translationBattleOngoing } = require('./lang.json');
 
 //VARs
 var shots = 0;
-var outOfCombat = 0;
+var knockedOut = 0;
 var startupArgs = process.argv.slice(2);
 var prefix = "/";
 var typeClient;
 var deaths = 0;
 var bombings = 0;
 let battleTakingPlace = false;
-var battleChannel = ""
-var battleChannelName = ""
+var battleChannel = "";
+var battleChannelName = "";
 
 //COLLECTIONS
-var deadMen = []; //dead dudes
-const ports = ["749952382099521607", "749687231391727726", "749687135585697853", "749688105530949733", "749687935221366824", "749687905793998949", "749975133052993576", "759444037308252160", "759442798063124540", "760198847514935397", "760199213349863475", "760199682034237481", "760200031432736768", "760200169328738365", "749685251600810075", "749685519386017925", "749685606983925813", "762309710522220564", "749962142278484008", "749962182028034137", "749688788871151696", "749688946841223248"]; //this are shipyards my boy
-let outOfCombatMen = new Map();
+var deadMen = [];
+const shipyards = ["749952382099521607", "749687231391727726", "749687135585697853", "749688105530949733", "749687935221366824", "749687905793998949", "749975133052993576", "759444037308252160", "759442798063124540", "760198847514935397", "760199213349863475", "760199682034237481", "760200031432736768", "760200169328738365", "749685251600810075", "749685519386017925", "749685606983925813", "762309710522220564", "749962142278484008", "749962182028034137", "749688788871151696", "749688946841223248"];
+let knockedOutMen = new Map();
 let hidden = new Map();
 let aiming = new Map();
 let classes = new Map();
@@ -33,7 +33,7 @@ let health = new Map();
 
 function resetBattleStats() {
     deaths = 0
-    outOfCombat = 0
+    knockedOut = 0
     shots = 0
     bombings = 0
     ammo = new Map();
@@ -43,7 +43,7 @@ function resetBattleStats() {
 //---------EVENTS---------\\
 
 client.once('ready', () => {
-    console.log(client.user.tag, " ready"); //Ready for battle babe!
+    console.log(client.user.tag, " ready");
 })
 
 client.on('message', async msg => {
@@ -54,33 +54,33 @@ client.on('message', async msg => {
                 battleTakingPlace = true
                 battleChannel = msg.channel.id
                 battleChannelName = msg.channel.name
-                msg.reply(" BATTAGLIA INIZIATA"); //THE BATTLE STARTED!
+                msg.reply(` ${translationBattleStarted}`); //THE BATTLE STARTED!
 
             } else {
-                msg.reply(" c'è già una battaglia in corso in " + battleChannelName); //there is already a battle taking place in ..
+                msg.reply(` ${translationBattleOngoing} ${battleChannelName}`); //there is already a battle taking place in ..
             }
         }
 
         if (msg.content.startsWith(prefix + "setclasses")) {
             let guild = msg.channel.guild
-            let rolefante = guild.roles.cache.get('749980482334228512') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
-            rolefante.members.each(x => {
-                classes.set(x.user.id, "fante")
+            let roleInfantry = guild.roles.cache.get('749980482334228512') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+            roleInfantry.members.each(x => {
+                classes.set(x.user.id, "infantry")
                 ammo.set(x.user.id, 1)
             });
-            let rolecav = guild.roles.cache.get('749980570918060174') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
-            rolecav.members.each(x => {
-                classes.set(x.user.id, "cavaliere")
+            let roleCavalry = guild.roles.cache.get('749980570918060174') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+            roleCavalry.members.each(x => {
+                classes.set(x.user.id, "cavarly")
                 ammo.set(x.user.id, 30)
             });
-            let rolenav = guild.roles.cache.get('749981637927764099') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
-            rolenav.members.each(x => {
-                classes.set(x.user.id, "nave")
+            let roleNavy = guild.roles.cache.get('749981637927764099') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
+            roleNavy.members.each(x => {
+                classes.set(x.user.id, "navy")
                 ammo.set(x.user.id, 1)
             });
             let roleart = guild.roles.cache.get('749980903358464021') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
             roleart.members.each(x => {
-                classes.set(x.user.id, "artigliere")
+                classes.set(x.user.id, "artillery")
                 ammo.set(x.user.id, 1)
             });
             let roleadmin = guild.roles.cache.get('758408981826764871') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
@@ -100,7 +100,7 @@ client.on('message', async msg => {
                 let answ = new discord.MessageEmbed();
                 answ.setColor("RANDOM");
                 answ.setFooter("Battaglia di " + battleChannelName)
-                answ.setDescription("deaths: " + deaths + "\nColpi sparati: " + shots + "\nFuori combattimento: " + outOfCombat + "\nBombardamenti: " + bombings);
+                answ.setDescription("deaths: " + deaths + "\nColpi sparati: " + shots + "\nFuori combattimento: " + knockedOut + "\nBombardamenti: " + bombings);
                 answ.setTitle("BILANCIO BATTAGLIA"); //Stats
                 msg.channel.send(answ);
             } else {
@@ -120,7 +120,7 @@ client.on('message', async msg => {
 
         if (msg.content.startsWith(prefix + "addinf")) {
             let vittimauser = msg.mentions.users.first();
-            classes.set(vittimauser.id, "fante");
+            classes.set(vittimauser.id, "infantry");
             health.set(vittimauser.id, 10);
             ammo.set(vittimauser.id, 1)
             //msg.reply(" hai ricaricato"); !! Do not remove comments if you don't want API-Clogging !!
@@ -129,7 +129,7 @@ client.on('message', async msg => {
 
         if (msg.content.startsWith(prefix + "addcav")) {
             let vittimauser = msg.mentions.users.first();
-            classes.set(vittimauser.id, "cavaliere");
+            classes.set(vittimauser.id, "cavarly");
             health.set(vittimauser.id, 10);
             ammo.set(vittimauser.id, 30)
 
@@ -139,7 +139,7 @@ client.on('message', async msg => {
 
         if (msg.content.startsWith(prefix + "addnavy")) {
             let vittimauser = msg.mentions.users.first();
-            classes.set(vittimauser.id, "nave");
+            classes.set(vittimauser.id, "navy");
             health.set(vittimauser.id, 100);
             ammo.set(vittimauser.id, 1)
 
@@ -157,7 +157,7 @@ client.on('message', async msg => {
 
         if (msg.content.startsWith(prefix + "addarty")) {
             let vittimauser = msg.mentions.users.first();
-            classes.set(vittimauser.id, "artigliere");
+            classes.set(vittimauser.id, "artillery");
             health.set(vittimauser.id, 10);
             ammo.set(vittimauser.id, 1)
             //msg.reply(" hai ricaricato");
@@ -166,13 +166,13 @@ client.on('message', async msg => {
     }
 
     if (msg.content.startsWith(prefix + "ricarica")) { //reload
-        if (classes.get(msg.author.id) == "fante") {
+        if (classes.get(msg.author.id) == "infantry") {
             ammo.set(msg.author.id, 1)
         }
-        if (classes.get(msg.author.id) == "cavaliere") {
+        if (classes.get(msg.author.id) == "cavarly") {
             ammo.set(msg.author.id, 30)
         }
-        if (classes.get(msg.author.id) == "artigliere" || classes.get(msg.author.id) == "nave") {
+        if (classes.get(msg.author.id) == "artillery" || classes.get(msg.author.id) == "navy") {
             ammo.set(msg.author.id, 1)
         }
         msg.delete();
@@ -183,14 +183,14 @@ client.on('message', async msg => {
         if (medics.has(msg.author.id)) {
             let vittima = msg.mentions.members.first();
             let vittimauser = msg.mentions.users.first();
-            outOfCombatMen.delete(vittimauser.id)
+            knockedOutMen.delete(vittimauser.id)
             vittima.roles.set([]);
 
         } else return msg.reply(" non sei un medico"); //you're not a medic!
     }
 
     if (msg.content.startsWith(prefix + "prendicopertura")) { //GET COVER BOI
-        if (classes.get(msg.author.id) == "fante" || classes.get(msg.author.id) == "cavaliere" || classes.get(msg.author.id) == "artigliere") {
+        if (classes.get(msg.author.id) == "infantry" || classes.get(msg.author.id) == "cavarly" || classes.get(msg.author.id) == "artillery") {
             if (hidden.has(msg.author.id)) {} else {
                 hidden.set(msg.author.id, true)
                 msg.delete();
@@ -209,8 +209,8 @@ client.on('message', async msg => {
         if (!classes.has(msg.author.id)) return;
         if (!battleTakingPlace) return;
 
-        if (deadMen.includes(msg.author.id) || outOfCombatMen.has(msg.author.id)) {} else {
-            if (classes.get(msg.author.id) == "fante" || classes.get(msg.author.id) == "cavaliere") {
+        if (deadMen.includes(msg.author.id) || knockedOutMen.has(msg.author.id)) {} else {
+            if (classes.get(msg.author.id) == "infantry" || classes.get(msg.author.id) == "cavarly") {
                 let prob = Math.random() * 10;
                 let vittima = msg.mentions.members.first();
                 let vittimauser = msg.mentions.users.first();
@@ -223,9 +223,9 @@ client.on('message', async msg => {
                     return msg.reply(" è già morto");
                 }
 
-                if (classes.get(vittimauser.id) == "nave") {
-                    if (!ports.includes(msg.channel.id)) {
-                        return msg.reply(" non puoi sparare ad una nave in un canale non marittimo, come lei non può sparare a te."); //you cannot shoot a ship if you're not in a shipyard as she cannot shoot you
+                if (classes.get(vittimauser.id) == "navy") {
+                    if (!shipyards.includes(msg.channel.id)) {
+                        return msg.reply(" non puoi sparare ad una navy in un canale non marittimo, come lei non può sparare a te."); //you cannot shoot a ship if you're not in a shipyard as she cannot shoot you
                     }
                 }
                 shots++
@@ -257,8 +257,8 @@ client.on('message', async msg => {
                                 vittima.setNickname("MORTO ☠")
                                 return;
                             } else {
-                                outOfCombat++
-                                outOfCombatMen.set(vittimauser.id, true)
+                                knockedOut++
+                                knockedOutMen.set(vittimauser.id, true)
                                 vittima.roles.set(['751094437148622848']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
                                 ammo.set(msg.author.id, (ammo.get(msg.author.id) - 1));
                                 return;
@@ -282,8 +282,8 @@ client.on('message', async msg => {
                             vittima.setNickname("MORTO ☠")
                             return;
                         } else {
-                            outOfCombat++
-                            outOfCombatMen.set(vittimauser.id, true)
+                            knockedOut++
+                            knockedOutMen.set(vittimauser.id, true)
                             vittima.roles.set(['751094437148622848']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
                             ammo.set(msg.author.id, (ammo.get(msg.author.id) - 1));
                             return;
@@ -311,8 +311,8 @@ client.on('message', async msg => {
                                 aiming.delete(msg.author.id);
                                 return;
                             } else {
-                                outOfCombat++
-                                outOfCombatMen.set(vittimauser.id, true)
+                                knockedOut++
+                                knockedOutMen.set(vittimauser.id, true)
                                 vittima.roles.set(['751094437148622848']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
                                 ammo.set(msg.author.id, (ammo.get(msg.author.id) - 1));
                                 aiming.delete(msg.author.id);
@@ -342,8 +342,8 @@ client.on('message', async msg => {
                                 aiming.delete(msg.author.id);
                                 return;
                             } else {
-                                outOfCombat++
-                                outOfCombatMen.set(vittimauser.id, true)
+                                knockedOut++
+                                knockedOutMen.set(vittimauser.id, true)
                                 vittima.roles.set(['751094437148622848']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
                                 ammo.set(msg.author.id, (ammo.get(msg.author.id) - 1));
                                 aiming.delete(msg.author.id);
@@ -361,7 +361,7 @@ client.on('message', async msg => {
                     }
                 }
             } else {
-                if (classes.has(msg.author.id) && classes.get(msg.author.id) == "artigliere") {
+                if (classes.has(msg.author.id) && classes.get(msg.author.id) == "artillery") {
                     if (ammo.get(msg.author.id) == 0) {
                         return msg.reply(" devi ricaricare!");
                     } else {
@@ -395,8 +395,8 @@ client.on('message', async msg => {
                             vittima.setNickname("MORTO ☠")
                             return;
                         } else {
-                            outOfCombat++
-                            outOfCombatMen.set(vittimauser.id, true)
+                            knockedOut++
+                            knockedOutMen.set(vittimauser.id, true)
                             vittima.roles.set(['751094437148622848']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
                             ammo.set(msg.author.id, 0);
                         }
@@ -409,8 +409,8 @@ client.on('message', async msg => {
 
     if (msg.content.startsWith(prefix + "cannoneggia")) { //Ships gonna shoot mate
         if (!battleTakingPlace) return; {
-            if (deadMen.includes(msg.author.id) || outOfCombatMen.has(msg.author.id)) {} else {
-                if (classes.has(msg.author.id) && ports.includes(msg.channel.id)) {
+            if (deadMen.includes(msg.author.id) || knockedOutMen.has(msg.author.id)) {} else {
+                if (classes.has(msg.author.id) && shipyards.includes(msg.channel.id)) {
 
                     let prob = Math.random() * 10;
                     let vittima = msg.mentions.members.first();
@@ -440,8 +440,8 @@ client.on('message', async msg => {
                                 vittima.setNickname("MORTO ☠")
                                 return;
                             } else {
-                                outOfCombat++
-                                outOfCombatMen.set(vittimauser.id, true)
+                                knockedOut++
+                                knockedOutMen.set(vittimauser.id, true)
                                 vittima.roles.set(['751094437148622848']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
                                 ammo.set(msg.author.id, 0);
                             }
