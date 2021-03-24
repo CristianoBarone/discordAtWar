@@ -24,10 +24,9 @@ let knockedOutMen = new Map();
 let hidden = new Map();
 let aiming = new Map();
 let classes = new Map();
-let ammo = new Map();
+let ammo = new Object();
 let medics = new Map();
 let health = new Map();
-
 
 //--------FUNCTIONS--------\\
 
@@ -36,7 +35,7 @@ function resetBattleStats() {
     knockedOut = 0
     shots = 0
     bombings = 0
-    ammo = new Map();
+    ammo = new Object();
     hidden = new Map();
 }
 
@@ -66,22 +65,22 @@ client.on('message', async msg => {
             let roleInfantry = guild.roles.cache.get('749980482334228512') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
             roleInfantry.members.each(x => {
                 classes.set(x.user.id, "infantry")
-                ammo.set(x.user.id, 1)
+                ammo[x.user.id] = 1;
             });
             let roleCavalry = guild.roles.cache.get('749980570918060174') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
             roleCavalry.members.each(x => {
                 classes.set(x.user.id, "cavarly")
-                ammo.set(x.user.id, 30)
+                ammo[x.user.id] = 30;
             });
             let roleNavy = guild.roles.cache.get('749981637927764099') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
             roleNavy.members.each(x => {
                 classes.set(x.user.id, "navy")
-                ammo.set(x.user.id, 1)
+                ammo[x.user.id] = 1;
             });
             let roleart = guild.roles.cache.get('749980903358464021') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
             roleart.members.each(x => {
                 classes.set(x.user.id, "artillery")
-                ammo.set(x.user.id, 1)
+                ammo[x.user.id] = 1;
             });
             let roleadmin = guild.roles.cache.get('758408981826764871') //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
             roleadmin.members.each(x => {
@@ -122,29 +121,21 @@ client.on('message', async msg => {
             let vittimauser = msg.mentions.users.first();
             classes.set(vittimauser.id, "infantry");
             health.set(vittimauser.id, 10);
-            ammo.set(vittimauser.id, 1)
-            //msg.reply(" hai ricaricato"); !! Do not remove comments if you don't want API-Clogging !!
-
+			ammo[x.user.id] = 1;
         }
 
         if (msg.content.startsWith(prefix + "addcav")) {
             let vittimauser = msg.mentions.users.first();
             classes.set(vittimauser.id, "cavarly");
             health.set(vittimauser.id, 10);
-            ammo.set(vittimauser.id, 30)
-
-            //msg.reply(" hai ricaricato");
-
+			ammo[x.user.id] = 30;
         }
 
         if (msg.content.startsWith(prefix + "addnavy")) {
             let vittimauser = msg.mentions.users.first();
             classes.set(vittimauser.id, "navy");
             health.set(vittimauser.id, 100);
-            ammo.set(vittimauser.id, 1)
-
-            //msg.reply(" hai ricaricato");
-
+			ammo[x.user.id] = 1;
         }
 
 
@@ -159,37 +150,35 @@ client.on('message', async msg => {
             let vittimauser = msg.mentions.users.first();
             classes.set(vittimauser.id, "artillery");
             health.set(vittimauser.id, 10);
-            ammo.set(vittimauser.id, 1)
-            //msg.reply(" hai ricaricato");
+			ammo[x.user.id] = 1;
         }
 
     }
 
     if (msg.content.startsWith(prefix + "ricarica")) { //reload
         if (classes.get(msg.author.id) == "infantry") {
-            ammo.set(msg.author.id, 1)
+			ammo[x.user.id] = 1;
         }
         if (classes.get(msg.author.id) == "cavarly") {
-            ammo.set(msg.author.id, 30)
+			ammo[x.user.id] = 30;
         }
         if (classes.get(msg.author.id) == "artillery" || classes.get(msg.author.id) == "navy") {
-            ammo.set(msg.author.id, 1)
+			ammo[x.user.id] = 1;
         }
         msg.delete();
-        //console.log(ammo.get(msg.author.id))
     }
 
-    if (msg.content.startsWith(prefix + "cura")) { //cure
+    if (msg.content.startsWith(prefix + "cura")) {
         if (medics.has(msg.author.id)) {
             let vittima = msg.mentions.members.first();
             let vittimauser = msg.mentions.users.first();
             knockedOutMen.delete(vittimauser.id)
             vittima.roles.set([]);
 
-        } else return msg.reply(" non sei un medico"); //you're not a medic!
+        } else return msg.reply(" non sei un medico"); 
     }
 
-    if (msg.content.startsWith(prefix + "prendicopertura")) { //GET COVER BOI
+    if (msg.content.startsWith(prefix + "prendicopertura")) { 
         if (classes.get(msg.author.id) == "infantry" || classes.get(msg.author.id) == "cavarly" || classes.get(msg.author.id) == "artillery") {
             if (hidden.has(msg.author.id)) {} else {
                 hidden.set(msg.author.id, true)
@@ -214,7 +203,7 @@ client.on('message', async msg => {
                 let prob = Math.random() * 10;
                 let vittima = msg.mentions.members.first();
                 let vittimauser = msg.mentions.users.first();
-                if (ammo.get(msg.author.id) == 0 || ammo.get(msg.author.id) == NaN || ammo.get(msg.author.id) == undefined) return msg.reply(" devi ricaricare!"); //reload dude
+                if (ammo[msg.author.id] == 0 || ammo[msg.author.id] == NaN || ammo[msg.author.id] == undefined) return msg.reply(" devi ricaricare!"); 
                 //ricaricano.push(msg.author.id);
                 if (!vittima) {
                     return msg.reply(" uso corretto: /spara + @<Utente>");
@@ -235,7 +224,7 @@ client.on('message', async msg => {
                     msg.reply(" colpito!");
                     deadMen.push(vittimauser.id);
                     vittima.setNickname("MORTO ☠")
-                    ammo.set(msg.author.id, (ammo.get(msg.author.id) - 1));
+                    ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                     return;
                 }
 
@@ -249,7 +238,7 @@ client.on('message', async msg => {
                             msg.reply(" colpito! ");
                             let probe = Math.random() * 10;
                             if (probe < 1) {
-                                ammo.set(msg.author.id, (ammo.get(msg.author.id) - 1));
+								ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                                 console.log(prob);
                                 deaths++
                                 vittima.roles.set(['751063437504675852']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
@@ -260,7 +249,7 @@ client.on('message', async msg => {
                                 knockedOut++
                                 knockedOutMen.set(vittimauser.id, true)
                                 vittima.roles.set(['751094437148622848']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
-                                ammo.set(msg.author.id, (ammo.get(msg.author.id) - 1));
+								ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                                 return;
                             }
                         }
@@ -274,7 +263,7 @@ client.on('message', async msg => {
                         msg.reply(" colpito! ");
                         let probe = Math.random() * 10;
                         if (probe < 1) {
-                            ammo.set(msg.author.id, (ammo.get(msg.author.id) - 1));
+							ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                             console.log(prob);
                             deaths++
                             vittima.roles.set(['751063437504675852']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
@@ -285,14 +274,12 @@ client.on('message', async msg => {
                             knockedOut++
                             knockedOutMen.set(vittimauser.id, true)
                             vittima.roles.set(['751094437148622848']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
-                            ammo.set(msg.author.id, (ammo.get(msg.author.id) - 1));
+							ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                             return;
                         }
                     }
-                    //msg.push(vittimauser.id);
-                    // }
                     else {
-                        ammo.set(msg.author.id, (ammo.get(msg.author.id) - 1))
+						ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                         return msg.reply(" mancato!");
                     }
                 } else {
@@ -302,7 +289,7 @@ client.on('message', async msg => {
                             msg.reply(" colpito! ");
                             let probe = Math.random() * 10;
                             if (probe < 1) {
-                                ammo.set(msg.author.id, (ammo.get(msg.author.id) - 1));
+								ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                                 console.log(prob);
                                 deaths++
                                 vittima.roles.set(['751063437504675852']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
@@ -314,13 +301,13 @@ client.on('message', async msg => {
                                 knockedOut++
                                 knockedOutMen.set(vittimauser.id, true)
                                 vittima.roles.set(['751094437148622848']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
-                                ammo.set(msg.author.id, (ammo.get(msg.author.id) - 1));
+								ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                                 aiming.delete(msg.author.id);
                                 return;
                             }
                         } else {
                             msg.reply(" mancato!");
-                            ammo.set(msg.author.id, (ammo.get(msg.author.id) - 1))
+							ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                             aiming.delete(msg.author.id);
                             return;
                         }
@@ -333,7 +320,7 @@ client.on('message', async msg => {
                             msg.reply(" colpito! ");
                             let probe = Math.random() * 10;
                             if (probe < 1) {
-                                ammo.set(msg.author.id, (ammo.get(msg.author.id) - 1));
+                                ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                                 console.log(prob);
                                 deaths++
                                 vittima.roles.set(['751063437504675852']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
@@ -345,24 +332,21 @@ client.on('message', async msg => {
                                 knockedOut++
                                 knockedOutMen.set(vittimauser.id, true)
                                 vittima.roles.set(['751094437148622848']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
-                                ammo.set(msg.author.id, (ammo.get(msg.author.id) - 1));
+                                ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                                 aiming.delete(msg.author.id);
                                 return;
                             }
                         }
-                        //msg.push(vittimauser.id);
-                        // }
                         else {
-                            ammo.set(msg.author.id, (ammo.get(msg.author.id) - 1))
+                            ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                             aiming.delete(msg.author.id);
                             return msg.reply(" mancato!"); //ya missed
                         }
-                        //morte()
                     }
                 }
             } else {
                 if (classes.has(msg.author.id) && classes.get(msg.author.id) == "artillery") {
-                    if (ammo.get(msg.author.id) == 0) {
+                    if (ammo[msg.author.id] == 0) {
                         return msg.reply(" devi ricaricare!");
                     } else {
 
@@ -371,7 +355,7 @@ client.on('message', async msg => {
                         if (!vittima) {
                             msg.channel.send("https://tenor.com/view/ww2-italy-artillery-army-cannon-gif-17499773").then(console.log()).catch(console.error); //Did the Piave say something?
                             msg.channel.setRateLimitPerUser(15)
-                            ammo.set(msg.author.id, 0);
+                            ammo[msg.author.id] = 0;
                             bombings++
                             setTimeout(function() {
                                 msg.channel.setRateLimitPerUser(0).then(console.log()).catch(console.error)
@@ -387,7 +371,7 @@ client.on('message', async msg => {
                         if (!vittima) return;
                         let probe = Math.random() * 10;
                         if (probe < 1) {
-                            ammo.set(msg.author.id, 0);
+                            ammo[msg.author.id] = 0;
                             console.log(prob);
                             deaths++
                             vittima.roles.set(['751063437504675852']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
@@ -398,7 +382,7 @@ client.on('message', async msg => {
                             knockedOut++
                             knockedOutMen.set(vittimauser.id, true)
                             vittima.roles.set(['751094437148622848']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
-                            ammo.set(msg.author.id, 0);
+                            ammo[msg.author.id] = 0;
                         }
                     }
                 }
@@ -415,7 +399,7 @@ client.on('message', async msg => {
                     let prob = Math.random() * 10;
                     let vittima = msg.mentions.members.first();
                     let vittimauser = msg.mentions.users.first();
-                    if (ammo.get(msg.author.id) == 0) {
+                    if (ammo[msg.author.id] == 0) {
                         return msg.reply(" devi ricaricare!");
                     } else {
                         msg.channel.send("https://lh3.googleusercontent.com/proxy/rxX5eGw8DbxsFkj6oQY9k7jCqFSp5vRkq5lrub7IEghu222dOAuK1tFYHrbWQqyzj1D_copE0rfZMhk2SxSX-bkzF4_nLyXtbk-ntp4hDHeRl-yn9CBefQ58d2uy5hNCFZl_k7u-uGepV_c").then(console.log()).catch(console.error);
@@ -432,7 +416,7 @@ client.on('message', async msg => {
                             msg.reply(" colpito e messo fuori gioco! ");
                             let probe = Math.random() * 10;
                             if (probe < 1) {
-                                ammo.set(msg.author.id, 0);
+                                ammo[msg.author.id] = 0;
                                 console.log(prob);
                                 deaths++
                                 vittima.roles.set(['751063437504675852']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
@@ -443,16 +427,16 @@ client.on('message', async msg => {
                                 knockedOut++
                                 knockedOutMen.set(vittimauser.id, true)
                                 vittima.roles.set(['751094437148622848']); //!!CHANGE THE ID IF YOU DON'T WANT AN ERROR!!
-                                ammo.set(msg.author.id, 0);
+                                ammo[msg.author.id] = 0;
                             }
                         }
                         //msg.push(vittimauser.id); ?? IDK what I wanted to do here but surely I was drunk or something
                         // }
                         else {
-                            ammo.set(msg.author.id, (ammo.get(msg.author.id) - 1))
+                            ammo[msg.author.id] = (ammo[msg.author.id] - 1);
                             return msg.reply(" mancato!");
                         }
-                        ammo.set(msg.author.id, 0);
+                        ammo[msg.author.id] = 0;
                         bombings++
                     }
                 }
