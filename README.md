@@ -3,7 +3,7 @@ Pew pew pew but polished
 
 
 # What is this madness?
-This is the bot used in the Italian discord-RP KOI, you can make wars with it and from 23/March/2021 it's being updated and rewritten as I came back on working at it, you can still find the first original code in the "legacy" branch. Please always link this repos as source. Some of the code is still in Italian, total translation is on the way.
+This is the bot used in the Italian discord-RP KOI, you can make wars with it and from 23/March/2021 it's being updated and rewritten as I came back on working at it, you can still find the first original code in the "legacy" branch. Please always link this repos as source. 
 
 ## What features are in the bot?
 - [x] Classes for players (Infantry, arty, ships, cavalry)
