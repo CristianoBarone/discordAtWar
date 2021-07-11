@@ -17,6 +17,7 @@ That's awesome, feel free to contact me in anyway you want to __(post scriptum: 
 
 # Node dependencies:
 > discord.js (latest stable/v12)
+> 
 > discord-reply
 
 # DISCLAIMER
