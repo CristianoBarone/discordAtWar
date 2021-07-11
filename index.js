@@ -21,7 +21,7 @@ var { infantryAmmo, cavarlyAmmo, navyAmmo, artilleryAmmo, deadPlayers, infantryR
 
 //COLLECTIONS
 var deadMen = [];
-const shipyards = []; //add channel IDs here
+const shipyards = ["863516974268547072"];
 let knockedOutMen = new Map();
 let hidden = new Map();
 let aiming = new Map();
@@ -115,6 +115,7 @@ client.on('message', async msg => {
                 msg.lineReply(` ${translationBattleOngoing} ${capitalize(battleChannelName.split("-").join(" "))}`);
             }
         }
+	}
 
         if (msg.content.startsWith(prefix + reloadconf)) {
 			msg.lineReply(` ${translationReloadingConfiguration}`);
