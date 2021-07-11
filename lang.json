@@ -1,9 +1,23 @@
 {
+	"translationDeaths": "Morti",
+	"translationShots": "Colpi sparati",
+	"translationBombings": "Bombardamenti",
+	"translationKnockedOut": "Fuori combattimento",
 	"translationBattleStarted": "BATTAGLIA INIZIATA",
 	"translationBattleEnded": "BATTAGLIA FINITA",
-	"translationBattleOngoing": "c'è già una battaglia in corso in",
-	"translationNoBattlesOngoing": "nessuna battaglia in corso!",
+	"translationBattleOngoing": "C'è già una battaglia in corso in",
+	"translationNoBattlesOngoing": "Nessuna battaglia in corso!",
 	"translationBattleOf": "Battaglia di",
 	"translationBattleStats": "BILANCIO BATTAGLIA",
-	"translationReloadingConfiguration": "ricarico la configurazione"
+	"translationReloadingConfiguration": "Ricarico la configurazione",
+	"translationMustReload": "Devi ricaricare!",
+	"translationHit": "Colpito!",
+	"translationHitAndSocked": "Colpito e steso!",
+	"translationUsage": "Uso corretto: ",
+	"translationUser": "@<Utente>",
+	"translationMustBeNear": "@<Utente>",
+	"translationMustBeInAShipyard": "@<Utente>",
+	"translationMiss": "Mancato!",
+	"translationAlreadyKnockedOut": "E' già fuori combattimento",
+	"translationNotAMedic": "Non sei un medico"
 }
