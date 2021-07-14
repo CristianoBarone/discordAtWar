@@ -1,6 +1,8 @@
 # discordAtWar v2
 Pew pew pew but polished
 
+### Known bugs
+- Because of how the role cache works, players cannot be registered if they don't first send a message while the bot is online, if the bot shutsdown the cache is wiped.
 
 # What is this madness?
 This is the bot used in the Italian discord-RP KOI, you can make wars with it and from 23/March/2021 it's being updated and rewritten as I came back on working at it, you can still find the first original code in the "legacy" branch. Please always link this repos as source. 
