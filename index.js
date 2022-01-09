@@ -21,7 +21,7 @@ var { infantryAmmo, cavarlyAmmo, navyAmmo, artilleryAmmo, deadPlayers, infantryR
 
 //COLLECTIONS
 var deadMen = [];
-const shipyards = ["863516974268547072"];
+const shipyards = [];
 let knockedOutMen = new Map();
 let hidden = new Map();
 let aiming = new Map();
@@ -40,7 +40,7 @@ function resetBattleStats() {
     bombings = 0
     ammo = new Object();
     hidden = new Map();
-	usersInProximity = new Map();
+    usersInProximity = new Map();
 }
 
 function setClasses(msg) {
@@ -120,7 +120,7 @@ client.on('message', async msg => {
         if (msg.content.startsWith(prefix + reloadconf)) {
 			msg.lineReply(` ${translationReloadingConfiguration}`);
             reloadConfs();
-        
+        }
 		
         if (msg.content.startsWith(prefix + "info")) {
 			let answ = new discord.MessageEmbed();
@@ -196,22 +196,25 @@ client.on('message', async msg => {
 			ammo[vittimauser.id] = artilleryAmmo;
         }
 
-    }
+    
 
     if (msg.content.startsWith(prefix + reload)) {
         if (classes.get(msg.author.id) == "infantry") {
 			ammo[msg.author.id] = infantryAmmo;
+            msg.delete();
         }
         if (classes.get(msg.author.id) == "cavarly") {
 			ammo[msg.author.id] = cavarlyAmmo;
+            msg.delete();
         }
         if (classes.get(msg.author.id) == "artillery") {
 			ammo[msg.author.id] = artilleryAmmo;
+            msg.delete();
         }
 		if (classes.get(msg.author.id) == "navy") {
 			ammo[msg.author.id] = navyAmmo;
+            msg.delete();
         }
-        msg.delete();
     }
 
     if (msg.content.startsWith(prefix + cure)) {
@@ -338,6 +341,7 @@ client.on('message', async msg => {
                     deadMen.push(vittimauser.id);
                     vittima.setNickname(deathNickname)
                     ammo[msg.author.id] = (ammo[msg.author.id] - 1);
+                    deaths++
                     return;
                 }
 
